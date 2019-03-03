@@ -1,0 +1,34 @@
+
+1. Go over the the terraform training on pluralsight.  -  https://app.pluralsight.com/library/courses/terraform-getting-started/table-of-contents
+
+2. Setup the following with terraform:
+
+- VPC ( with all required components )
+
+- 2 X private subnet 
+
+- 2 X public subnet
+
+- place a server in each subnet (t2.micro)
+
+3. Create an IAM Role and attach policy that allows creating vpc, subnets and instances and attach it to one of the servers in your private subnet.
+
+4. Connect to the server with the role, copy terraform files and execute it without providing secret key and access key to terraform.
+
+5. Save configuration with terraforming gem and delete instances (see below)
+
+
+
+once done, please export the configuration for review using this tool:  
+
+https://github.com/dtan4/terraforming  (should be self explanatory but we will upload our tutorial)
+
+once exported you can (and should) delete it to save money on your AWS account
+
+
+
+For the brave:
+
+1. Use data source to find all Availability Zones and iterate over the array to place servers there.
+
+2. Find how find AWS credentials in the instance with attached IAM Role
