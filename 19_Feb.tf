@@ -4,8 +4,12 @@
 
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
-variable "private_key_path" {}
-variable "key_name" {}
+variable "private_key_path" {
+    default = "/home/ubuntu/.ssh/key.pem"
+}
+variable "key_name" {
+    default = "19_Feb"
+}
 
 variable "IAM_Role" {
     default = "EC2_Role"
@@ -149,6 +153,8 @@ resource "aws_security_group" "19_Feb_SG" {
 	}
 }
 
+
+
 # INSTANCES #
 
 
@@ -156,10 +162,10 @@ resource "aws_instance" "master_1" {
 	ami = "ami-0ac019f4fcb7cb7e6"
 	instance_type = "t2.micro"
 	subnet_id = "${aws_subnet.ext_subnet1.id}"
-   # iam_instance_profile = "${var.IAM_Role}"
 	vpc_security_group_ids = ["${aws_security_group.19_Feb_SG.id}"]
 	key_name = "${var.key_name}"
-# Copies the 19_Feb.pem file to /etc/myapp.conf
+
+# Copies the 19_Feb.pem file to Ubuntu home
   provisioner "file" {
     source      = "${var.private_key_path}"
     destination = "/home/ubuntu/.ssh/key.pem"
@@ -169,6 +175,18 @@ resource "aws_instance" "master_1" {
     destination = "/home/ubuntu/19_Feb.tf"
   }
   
+  #provisioner "file" {
+  #  source      = "terraform_0.11.11_linux_amd64.zip"
+  #  destination = "/home/ubuntu/terraform_0.11.11_linux_amd64.zip"
+  #}
+  
+   #  provisioner "remote-exec" {
+   #     inline = [
+   #     "sudo apt-get install unzip",
+   #     "unzip terraform_0.11.11_linux_amd64.zip",
+   #     ]
+   # }
+
     connection {
       user = "ubuntu"
       private_key = "${file(var.private_key_path)}"
@@ -185,11 +203,6 @@ resource "aws_instance" "master_2" {
 	vpc_security_group_ids = ["${aws_security_group.19_Feb_SG.id}"]
 	key_name = "${var.key_name}"
 
-# Copies the 19_Feb.pem file to /etc/myapp.conf
-  provisioner "file" {
-    source      = "${var.private_key_path}"
-    destination = "/home/ubuntu/.ssh/"
-  }
 
     connection {
       user = "ubuntu"
@@ -206,7 +219,7 @@ resource "aws_instance" "slave_1" {
 	subnet_id = "${aws_subnet.int_subnet2.id}"
 	vpc_security_group_ids = ["${aws_security_group.19_Feb_SG.id}"]
 	key_name = "${var.key_name}"
-
+    
     connection {
       user = "ubuntu"
       private_key = "${file(var.private_key_path)}"
@@ -234,17 +247,24 @@ resource "aws_instance" "slave_2" {
 
 
 #########
-# OUTPUT
+# OUTPUT Public IP of master 1 and internal IP of the rest
 #########
 
-output "master_node_ip" {
+output "master1_node_public_ip" {
        value = "${aws_instance.master_1.public_ip}"
    }
 
+output "master2_node_ip" {
+       value = "${aws_instance.master_2.private_ip}"
+   }
 
-output "aws_instance_public_dns" {
-    value = "${aws_instance.master_1.public_dns}"
-}
+
+output "slave1_node_ip" {
+       value = "${aws_instance.slave_1.private_ip}"
+   }
+output "slave2_node_ip" {
+       value = "${aws_instance.slave_2.private_ip}"
+   }
 
 
 
