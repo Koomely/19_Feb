@@ -13,7 +13,7 @@ resource "aws_instance" "Master-2" {
     associate_public_ip_address = true
     private_ip                  = "10.0.3.43"
     source_dest_check           = true
-
+ 
     root_block_device {
         volume_type           = "gp2"
         volume_size           = 8
