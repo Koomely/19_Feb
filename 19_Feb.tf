@@ -71,6 +71,9 @@ resource "aws_internet_gateway" "igw" {
 	vpc_id = "${aws_vpc.vpc.id}"
 }
 
+
+
+
 resource "aws_subnet" "ext_subnet1" {
 	cidr_block = "${var.subnet1_address_space}"
 	vpc_id = "${aws_vpc.vpc.id}"
